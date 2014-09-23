@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FxCodeGenerator", "FxCodeGenerator\FxCodeGenerator.csproj", "{BF89ACB9-41EF-4EE8-8E31-770E3A9B6E05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ookii.Dialogs", "..\..\ThirdParty\Ookii.Dialogs\src\Ookii.Dialogs\Ookii.Dialogs.csproj", "{779E62B3-C5A6-494D-9D87-96C0DEC7FFB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaustGames.Controls", "..\..\Common\FaustGames.Controls\FaustGames.Controls.csproj", "{9F223708-C6F9-4D3B-9701-96E4B9B1C484}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaustGames.CodeGeneration.Effects", "..\..\Common\FaustGames.CodeGeneration.Effects\FaustGames.CodeGeneration.Effects.csproj", "{2342A32B-D0BF-42DC-9334-2B9FA423DD59}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF89ACB9-41EF-4EE8-8E31-770E3A9B6E05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF89ACB9-41EF-4EE8-8E31-770E3A9B6E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF89ACB9-41EF-4EE8-8E31-770E3A9B6E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF89ACB9-41EF-4EE8-8E31-770E3A9B6E05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{779E62B3-C5A6-494D-9D87-96C0DEC7FFB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{779E62B3-C5A6-494D-9D87-96C0DEC7FFB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{779E62B3-C5A6-494D-9D87-96C0DEC7FFB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{779E62B3-C5A6-494D-9D87-96C0DEC7FFB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F223708-C6F9-4D3B-9701-96E4B9B1C484}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F223708-C6F9-4D3B-9701-96E4B9B1C484}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F223708-C6F9-4D3B-9701-96E4B9B1C484}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F223708-C6F9-4D3B-9701-96E4B9B1C484}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2342A32B-D0BF-42DC-9334-2B9FA423DD59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2342A32B-D0BF-42DC-9334-2B9FA423DD59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2342A32B-D0BF-42DC-9334-2B9FA423DD59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2342A32B-D0BF-42DC-9334-2B9FA423DD59}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
