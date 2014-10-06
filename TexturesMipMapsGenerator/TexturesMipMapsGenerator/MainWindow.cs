@@ -41,6 +41,78 @@ namespace TexturesMipMapsGenerator
                 return (byte)(((int)r + (int)g + (int)b + (int)a) >> 2);
             }
         }
+        private unsafe void SaveUncompressedRaw(Bitmap bitmap, BinaryWriter writer) {
+            Application.DoEvents();
+
+            var width = bitmap.Width;
+            var height = bitmap.Height;
+
+            if ((width == 1) || (height == 1)) return;
+
+            var mipmapWidth = bitmap.Width >> 1;
+            var mipmapHeight = bitmap.Height >> 1;
+            using (var mipmap = new Bitmap(mipmapWidth, mipmapHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+            {
+                var sourceBits = bitmap.LockBits(new Rectangle(0, 0, width, height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                var targetBits = mipmap.LockBits(new Rectangle(0, 0, mipmapWidth, mipmapHeight), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                var sourceScan = (Color*)sourceBits.Scan0;
+                var targetScan = (Color*)targetBits.Scan0;
+                int x, y;
+
+                Color* sourceRow;
+                var saveScan = (Color*)sourceBits.Scan0;
+                for (y = 0; y < height; y++)
+                {
+                    sourceRow = saveScan;
+                    for (x = 0; x < width; x++)
+                    {
+                        uint rgba = *((uint*)sourceRow);
+                        writer.Write(rgba);
+                        sourceRow++;
+                    }
+                    saveScan += height;
+                }
+                
+                Color* sourceRow1;
+
+                Color result;
+                Color source1;
+                Color source2;
+                Color source3;
+                Color source4;
+                for (y = 0; y < mipmapHeight; y++)
+                {
+                    sourceRow = sourceScan;
+                    sourceRow1 = sourceRow + width;
+                    for (x = 0; x < mipmapWidth; x++)
+                    {
+                        source1 = (*sourceRow);
+                        source2 = (*sourceRow1);
+                        sourceRow++;
+                        sourceRow1++;
+                        source3 = (*sourceRow);
+                        source4 = (*sourceRow);
+                        sourceRow++;
+                        sourceRow1++;
+                        result.r = (byte)(((int)source1.r + (int)source2.r + (int)source3.r + (int)source4.r) >> 2);
+                        result.g = (byte)(((int)source1.g + (int)source2.g + (int)source3.g + (int)source4.g) >> 2);
+                        result.b = (byte)(((int)source1.b + (int)source2.b + (int)source3.b + (int)source4.b) >> 2);
+                        result.a = (byte)(((int)source1.a + (int)source2.a + (int)source3.a + (int)source4.a) >> 2);
+
+                        (*targetScan) = result;
+                        targetScan++;
+                    }
+                    sourceScan = sourceRow1;
+                }
+
+                bitmap.UnlockBits(sourceBits);
+                mipmap.UnlockBits(targetBits);
+
+                SaveUncompressedRaw(mipmap, writer);
+
+            }
+        }
 
         private unsafe void SaveMipmap(Bitmap bitmap, string targetPath, string fileName) 
         {
@@ -841,7 +913,14 @@ namespace TexturesMipMapsGenerator
                 else
                 {
                     using (var bitmap = new Bitmap(file))
-                        SaveMipmap(bitmap, tempPath, name);
+                    {
+                        using(var targetStream = File.Create(Path.Combine(tempPath, Path.GetFileNameWithoutExtension(file) + ".raw")))
+                        using(var writer = new BinaryWriter(targetStream))
+                        {
+                            SaveUncompressedRaw(bitmap, writer);
+                        }
+                        //SaveMipmap(bitmap, tempPath, name);
+                    }
                 }
             }
             files = Directory.GetFiles(_pngSource.Text, "*.obj");
@@ -909,6 +988,14 @@ namespace TexturesMipMapsGenerator
                 Application.DoEvents();
             }
             
+            files = Directory.GetFiles(tempPath, "*.raw");
+            foreach (var file in files)
+            {
+                var copy = Path.Combine(_targetFolder.Text, Path.GetFileName(file));
+                File.Copy(file, copy, true);
+                Application.DoEvents();
+            }
+
             files = Directory.GetFiles(tempPath, "*.3d");
             foreach (var file in files)
             {
