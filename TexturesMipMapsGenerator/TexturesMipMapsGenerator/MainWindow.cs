@@ -41,7 +41,7 @@ namespace TexturesMipMapsGenerator
                 return (byte)(((int)r + (int)g + (int)b + (int)a) >> 2);
             }
         }
-        private unsafe void SaveUncompressedRaw(Bitmap bitmap, BinaryWriter writer) {
+        private unsafe void SaveUncompressedRaw(Bitmap bitmap, BinaryWriter writer, int sizeLimit) {
             Application.DoEvents();
 
             var width = bitmap.Width;
@@ -61,17 +61,20 @@ namespace TexturesMipMapsGenerator
                 int x, y;
 
                 Color* sourceRow;
-                var saveScan = (Color*)sourceBits.Scan0;
-                for (y = 0; y < height; y++)
+                if (width < sizeLimit)
                 {
-                    sourceRow = saveScan;
-                    for (x = 0; x < width; x++)
+                    var saveScan = (Color*)sourceBits.Scan0;
+                    for (y = 0; y < height; y++)
                     {
-                        uint rgba = *((uint*)sourceRow);
-                        writer.Write(rgba);
-                        sourceRow++;
+                        sourceRow = saveScan;
+                        for (x = 0; x < width; x++)
+                        {
+                            uint rgba = *((uint*)sourceRow);
+                            writer.Write(rgba);
+                            sourceRow++;
+                        }
+                        saveScan += height;
                     }
-                    saveScan += height;
                 }
                 
                 Color* sourceRow1;
@@ -109,7 +112,7 @@ namespace TexturesMipMapsGenerator
                 bitmap.UnlockBits(sourceBits);
                 mipmap.UnlockBits(targetBits);
 
-                SaveUncompressedRaw(mipmap, writer);
+                SaveUncompressedRaw(mipmap, writer, sizeLimit);
 
             }
         }
@@ -917,7 +920,7 @@ namespace TexturesMipMapsGenerator
                         using(var targetStream = File.Create(Path.Combine(tempPath, Path.GetFileNameWithoutExtension(file) + ".raw")))
                         using(var writer = new BinaryWriter(targetStream))
                         {
-                            SaveUncompressedRaw(bitmap, writer);
+                            SaveUncompressedRaw(bitmap, writer, 2048);
                         }
                         //SaveMipmap(bitmap, tempPath, name);
                     }

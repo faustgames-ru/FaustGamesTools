@@ -9,7 +9,7 @@ namespace FbxConverter.VertexConverters
         public List<float> ValuesList = new List<float>();
         public List<List<float>> AllValues = new List<List<float>>();
         public List<ushort> Indices = new List<ushort>();
-        public Matrix4x4[] Transforms;
+        public MeshTransform[] Transforms;
         public int MeshIndex;
         public Mesh Mesh;
         public int VertexIndex;
@@ -21,6 +21,12 @@ namespace FbxConverter.VertexConverters
                 throw new IndexOutOfRangeException(string.Format("index buffer value mus be in range [{0}..{1}]", ushort.MinValue, ushort.MaxValue));
             Indices.Add((ushort)index);
         }
+    }
+
+    public class MeshTransform 
+    {
+        public Matrix4x4 Transform = Matrix4x4.Identity;
+        public float Radius;
     }
 
     public static class VertexConverterFactory

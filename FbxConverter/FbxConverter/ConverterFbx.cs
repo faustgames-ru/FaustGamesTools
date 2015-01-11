@@ -69,12 +69,45 @@ namespace FbxConverter
             return result;
         }
 
-        public static void ParseNode(ConverterContext context, List<VertexConverter> converters, Node node, Scene model, ref int baseIndex, Matrix4x4[] matrixes)
+        public static void ParseNode(ConverterContext context, List<VertexConverter> converters, Node node, Scene model, ref int baseIndex, MeshTransform[] matrixes)
         {
             for (var i = 0; i < node.MeshCount; i++)
             {
                 var meshIndex = node.MeshIndices[i];
-                matrixes[meshIndex] = GetFullNodeTransform(node);
+                matrixes[meshIndex].Transform = GetFullNodeTransform(node);
+
+                float r = 0.0f;
+                var min = new Vector3D(float.MaxValue);
+                var max = new Vector3D(-float.MaxValue);
+                for (var j = 0; j < model.Meshes[meshIndex].VertexCount; j++)
+                {
+                    var v = model.Meshes[meshIndex].Vertices[j] = matrixes[meshIndex].Transform * model.Meshes[meshIndex].Vertices[j];
+                    model.Meshes[meshIndex].Normals[j] = new Matrix3x3(matrixes[meshIndex].Transform) * model.Meshes[meshIndex].Normals[j];
+                    model.Meshes[meshIndex].Tangents[j] = new Matrix3x3(matrixes[meshIndex].Transform) * model.Meshes[meshIndex].Tangents[j];
+                    model.Meshes[meshIndex].BiTangents[j] = new Matrix3x3(matrixes[meshIndex].Transform) * model.Meshes[meshIndex].BiTangents[j];
+                    if (min.X > v.X) 
+                        min.X = v.X;
+                    if (min.Y > v.Y)
+                        min.Y = v.Y;
+                    if (min.Z > v.Z)
+                        min.Z = v.Z;
+                    if (max.X < v.X)
+                        max.X = v.X;
+                    if (max.Y < v.Y)
+                        max.Y = v.Y;
+                    if (max.Z < v.Z)
+                        max.Z = v.Z;
+                }
+                var center = (max + min) * 0.5f;
+                for (var j = 0; j < model.Meshes[meshIndex].VertexCount; j++)
+                {
+                    var v = model.Meshes[meshIndex].Vertices[j] = model.Meshes[meshIndex].Vertices[j] - center;
+                    var l = v.Length();
+                    if (l > r)
+                        r = l;
+                }
+                matrixes[meshIndex].Transform = Matrix4x4.FromTranslation(center);
+                matrixes[meshIndex].Radius = r;
                 ParseMesh(context, converters, model.Meshes[meshIndex], meshIndex, ref baseIndex);
             }
             for (var i = 0; i < node.ChildCount; i++)
@@ -92,9 +125,9 @@ namespace FbxConverter
             var context = new ConverterContext();
             var converters = configuration.VertexDeclarations.Select(converter => VertexConverterFactory.CreteConverter(converter.Type)).ToList();
             var baseIndex = 0;
-            var matrices = new Matrix4x4[model.Meshes.Count];
+            var matrices = new MeshTransform[model.Meshes.Count];
             for (var i = 0; i < matrices.Length; i++ )
-                matrices[i] = Matrix4x4.Identity;
+                matrices[i] = new MeshTransform();
             ParseNode(context, converters, model.RootNode, model, ref baseIndex, matrices);
             context.Transforms = matrices;
             SaveVerticesToBinaryFile(context, Path.Combine(targetDirectory, Path.GetFileNameWithoutExtension(sourseFile) + "_v.v"));
@@ -127,11 +160,12 @@ namespace FbxConverter
             {
                 foreach (var transform in context.Transforms)
                 {
+                    writer.Write(transform.Radius);
                     for (var j = 1; j <= 4; j++)
                     {
                         for (var i = 1; i <= 4; i++)
                         {
-                            writer.Write(transform[i, j]);
+                            writer.Write(transform.Transform[i, j]);
                         }
                     }
                 }
