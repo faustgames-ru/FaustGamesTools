@@ -17,8 +17,11 @@ namespace test
     {
         virtual void init(int, float);
         virtual void _stdcall init1(int, float);
+        virtual void _stdcall init2(int, float) = 0;
     };
-    class Foo1 {};
+
+    //[Factory]
+    class Foo1 : Foo {};
     class Foo2 {};
 }
 ";
@@ -55,7 +58,10 @@ namespace test
 
             public void EnterEveryRule(ParserRuleContext ctx)
             {
-                if (ctx.RuleIndex == CParser.RULE_variableDeclaratorId)
+                if (ctx.RuleIndex == CParser.RULE_parameterName)
+                {
+                }
+                if (ctx.RuleIndex == CParser.RULE_parameterType)
                 {
                 }
                 if (ctx.RuleIndex == CParser.RULE_methodParameter)
@@ -68,6 +74,15 @@ namespace test
                 {
                 }
                 if (ctx.RuleIndex == CParser.RULE_methodDeclaration)
+                {
+                }
+                if (ctx.RuleIndex == CParser.RULE_classExtends)
+                {
+                }
+                if (ctx.RuleIndex == CParser.RULE_classAttributeName)
+                {
+                }
+                if (ctx.RuleIndex == CParser.RULE_classAttribute)
                 {
                 }
                 if (ctx.RuleIndex == CParser.RULE_classDeclaration)

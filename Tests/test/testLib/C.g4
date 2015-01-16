@@ -12,21 +12,47 @@ namespaceDeclaration
 namespaceBody
     :   '{' classDeclaration* '}'
 	;
+
 classDeclaration
-    :   'class' Identifier 
-        (':' classDeclaration)?
+    :   classAttribute?
+		'class' Identifier 
+        (':' classExtends)?
         classBody
     ;
+
+classExtends
+	:	classNames
+	;
+
+classNames
+	: className (',' className)?
+	;
+
+className
+	: Identifier
+	;
+
+classAttribute
+	: '//' '[' classAttributeName ']'
+	;
+
+classAttributeName
+	: Identifier
+	;
 
 classBody
     :   '{' methodDeclaration* '}' ';'
     ;
 
 methodDeclaration
-	:	('virtual')? 
-		type 
-		(call)?
-		Identifier '(' methodParameters? ')' ';'
+	:	'virtual'? 
+		returnType 
+		call?
+		Identifier '(' methodParameters? ')' ('=''0')? ';'
+	;
+
+returnType 
+	: type
 	;
 
 call
@@ -42,8 +68,16 @@ methodParameters
     ;
 	
 methodParameter
-    :   type variableDeclaratorId?
+    :   parameterType parameterName?
     ;
+
+parameterType
+	:	type
+	;
+
+parameterName
+	:	variableDeclaratorId
+	;
 
 variableDeclaratorId
     :   Identifier ('[' ']')*
@@ -103,7 +137,8 @@ compileUnit
 COMMENT
     :   '/*' .*? '*/' -> skip
     ;
-
+/*
 LINE_COMMENT
     :   '//' ~[\r\n]* -> skip
     ;
+*/
