@@ -117,14 +117,7 @@ namespace CodeFormatter
 
     public abstract class Parser
     {
-        public abstract CodeFile Parse();
-    }
-
-    public abstract class TextParser : Parser
-    {
-        protected TextParser(string text)
-        {
-        }
+        public abstract CodeFile Parse(string code);
     }
 
     public class Formatter
