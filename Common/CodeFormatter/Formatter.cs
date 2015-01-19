@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace CodeFormatter
@@ -14,9 +15,15 @@ namespace CodeFormatter
     public class Namespace
     {
         public string Name;
-        public Struct[] Structs;
-        public Interface[] Interfaces;
-        public Class[] Classes;
+        public List<Struct> Structs = new List<Struct>();
+        public List<Interface> Interfaces = new List<Interface>();
+        public List<Class> Classes = new List<Class>();
+        public List<Method> RootMethods = new List<Method>();
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public enum TypePrimive
@@ -47,31 +54,57 @@ namespace CodeFormatter
 
     public class Field
     {
-        public Type Type;
+        public string TypeName;
         public string Name;
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1}", TypeName, Name);
+        }
     }
 
     public class MethodParameter
     {
-        public Type Type;
+        public string TypeName;
         public string Name;
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1}", TypeName, Name);
+        }
     }
 
     public class Method
     {
-        public Type ResulType;
+        public string ResulTypeName;
         public string Name;
-        public MethodParameter[] Parameters;
+        public List<MethodParameter> Parameters = new List<MethodParameter>();
+        public bool IsPure = false;
+
+        public override string ToString()
+        {
+            return string.Format(IsPure ? "abstract {0} {1} (..)" : "{0} {1} (..)", ResulTypeName, Name);
+        }
     }
 
     public class Fields
     {
-        public Field[] Items;
+        public List<Field> Items = new List<Field>();
+
+        public void Add(Field field)
+        {
+            Items.Add(field);
+        }
     }
 
     public class Methods
     {
-        public Method[] Items;
+        public List<Method> Items= new List<Method>();
+
+        public void Add(Method method)
+        {
+            Items.Add(method);
+        }
     }
 
     public class TypeDeclaration
@@ -83,12 +116,22 @@ namespace CodeFormatter
     {
         public Class Parent;
         public Interfaces Interfaces = new Interfaces();
+        public List<string> Extends = new List<string>();
         public Fields Fields = new Fields();
         public Methods Methods = new Methods();
+        public override string ToString()
+        {
+            return Name;
+        }
     }
     public class Struct : TypeDeclaration
     {
         public Fields Fields = new Fields();
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class Interface : TypeDeclaration
@@ -100,19 +143,19 @@ namespace CodeFormatter
         {
             if (Parents == null) return false;
             if (Parents.Items == null) return false;
-            if (Parents.Items.Length == 0) return false;
+            if (Parents.Items.Count == 0) return false;
             return true;
         }
     }
 
     public class Interfaces
     {
-        public Interface[] Items;
+        public List<Interface> Items = new List<Interface>();
     }
 
     public class CodeFile
     {
-        public Namespace[] Namespaces;
+        public List<Namespace> Namespaces = new List<Namespace>();
     }
 
     public abstract class Parser
@@ -169,7 +212,7 @@ namespace CodeFormatter
 
         private void Format(Tabulator tabulator, Field value)
         {
-            tabulator.AppendFormatLine(PatternFiled, value.Type, value.Name);
+            tabulator.AppendFormatLine(PatternFiled, value.TypeName, value.Name);
         }
 
         private void Format(Tabulator tabulator, Fields value)
@@ -210,11 +253,11 @@ namespace CodeFormatter
         {
         }
 
-        private void AppendInterfaces(Tabulator tabulator, Interface[] items)
+        private void AppendInterfaces(Tabulator tabulator, IList<Interface> items)
         {
             tabulator.Append(" : ");
-            var high = items.Length - 1;
-            for (var i = 0; i < items.Length; i++)
+            var high = items.Count - 1;
+            for (var i = 0; i < items.Count; i++)
             {
                 tabulator.Append(items[i].Name);
                 if (i < high)

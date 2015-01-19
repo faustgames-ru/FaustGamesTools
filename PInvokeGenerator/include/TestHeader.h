@@ -1,49 +1,55 @@
 #ifndef TESTHEADER_H
 #define TESTHEADER_H
 
-#define API_CALL _stdcall
+#define API_CALL __stdcall
 
-struct Vector2
+namespace Test
 {
-	float x;
-	float y;
-};
 
-struct Vector3
-{
-	float x;
-	float y;
-	float z;
-};
+	struct Vector2
+	{
+		float x;
+		float y;
+	};
 
-struct Vector4
-{
-	float x;
-	float y;
-	float z;
-	float w;
-};
+	struct Vector3
+	{
+		float x;
+		float y;
+		float z;
+	};
 
-class IUpdateArgs
-{
-public:
-	virtual float API_CALL getElapsedTime() = 0;
-	virtual void API_CALL setElapsedTime(float value) = 0;
-};
+	struct Vector4
+	{
+		float x;
+		float y;
+		float z;
+		float w;
+	};
 
-class ITestSystem
-{
-public:
-	virtual void API_CALL update(const IUpdateArgs *args) = 0;
-};
+	class IUpdateArgs
+	{
+	public:
+		virtual float API_CALL getElapsedTime() = 0;
+		virtual void API_CALL setElapsedTime(float value) = 0;
+	};
 
-class ITestFactory
-{
-public:
-	virtual ITestSystem * API_CALL ñreateTestSystem() = 0;
-	virtual IUpdateArgs * API_CALL ñreateUpdateArgs() = 0;
-};
+	class ITestSystem
+	{
+	public:
+		virtual void API_CALL update(const IUpdateArgs *args) = 0;
+	};
 
-ITestFactory * API_CALL CreateTestFactory();
+	class ITestFactory
+	{
+	public:
+		virtual ITestSystem * API_CALL ñreateTestSystem() = 0;
+		virtual IUpdateArgs * API_CALL ñreateUpdateArgs() = 0;
+	};
+
+	ITestFactory * API_CALL CreateTestFactory();
+}
+
+#include "TestHeaderPInvoke.h"
 
 #endif /*TESTHEADER_H*/

@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{96590B57
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestDll", "TestDll\TestDll.vcxproj", "{3E1A5F1D-9F9B-4A3F-9447-0F2D18BF8446}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrammarCpp", "GrammarCpp\GrammarCpp.csproj", "{892B30F7-E7E4-4E82-826C-4112AA42132F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,16 @@ Global
 		{3E1A5F1D-9F9B-4A3F-9447-0F2D18BF8446}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{3E1A5F1D-9F9B-4A3F-9447-0F2D18BF8446}.Release|Win32.ActiveCfg = Release|Win32
 		{3E1A5F1D-9F9B-4A3F-9447-0F2D18BF8446}.Release|Win32.Build.0 = Release|Win32
+		{892B30F7-E7E4-4E82-826C-4112AA42132F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{892B30F7-E7E4-4E82-826C-4112AA42132F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{892B30F7-E7E4-4E82-826C-4112AA42132F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{892B30F7-E7E4-4E82-826C-4112AA42132F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{892B30F7-E7E4-4E82-826C-4112AA42132F}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{892B30F7-E7E4-4E82-826C-4112AA42132F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{892B30F7-E7E4-4E82-826C-4112AA42132F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{892B30F7-E7E4-4E82-826C-4112AA42132F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{892B30F7-E7E4-4E82-826C-4112AA42132F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{892B30F7-E7E4-4E82-826C-4112AA42132F}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +72,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{8FD5A65C-F5A4-46ED-B4A9-3BD2314D15D6} = {46499D7B-A153-465F-91FB-3FAF030F0E76}
 		{3E1A5F1D-9F9B-4A3F-9447-0F2D18BF8446} = {96590B57-B38F-4D8C-9DA1-BA16E912DC23}
+		{892B30F7-E7E4-4E82-826C-4112AA42132F} = {46499D7B-A153-465F-91FB-3FAF030F0E76}
 	EndGlobalSection
 EndGlobal
