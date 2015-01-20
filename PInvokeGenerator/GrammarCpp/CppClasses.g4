@@ -57,7 +57,7 @@ classBody
     ;
 
 methodDeclaration
-	:	'virtual'? returnType call? methodName '(' methodParameters? ')' methodPure? ';'
+	:	('extern' '"C"' 'DLLEXPORT')? 'virtual'? typeParameterConst? returnType typeParameterLink? call? methodName '(' methodParameters? ')' methodPure? ';'
 	;
 
 methodPure
@@ -85,9 +85,16 @@ methodParameters
     ;
 	
 methodParameter
-    :   parameterType parameterName?
+    :   typeParameterConst? parameterType typeParameterLink? parameterName?
     ;
 
+typeParameterConst
+	:	'const'
+	;
+
+typeParameterLink
+	:	'*'
+	;
 
 parameterType
 	:	type

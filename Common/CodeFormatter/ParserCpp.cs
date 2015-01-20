@@ -7,7 +7,7 @@ namespace CodeFormatter
 {
     public class ParserCpp : Parser
     {
-        public override CodeFile Parse(string code)
+        public override CodeFile Parse(string libraryName, string fileName, string code)
         {
             var lex = new CppClassesLexer(new AntlrInputStream(code));
             var tokens = new CommonTokenStream(lex);
@@ -16,7 +16,10 @@ namespace CodeFormatter
             var walker = new ParseTreeWalker();
             var listener = new ParseTreeListener();
             walker.Walk(listener, ctx);
-            return listener.GetResult();
+            var result = listener.GetResult();
+            result.LibraryName = libraryName;
+            result.FileName = fileName;
+            return result;
         }
     }
 
@@ -149,6 +152,12 @@ namespace CodeFormatter
                 case CppClassesParser.RULE_returnType:
                     Method.ResulTypeName = e.Context.GetText();
                     break;
+                case CppClassesParser.RULE_typeParameterConst:
+                    Method.ReturnConst = true;
+                    break;
+                case CppClassesParser.RULE_typeParameterLink:
+                    Method.ReturnLink = true;
+                    break;
                 case CppClassesParser.RULE_methodPure:
                     Method.IsPure = true;
                     break;
@@ -172,6 +181,12 @@ namespace CodeFormatter
         {
             switch (e.Context.RuleIndex)
             {
+                case CppClassesParser.RULE_typeParameterConst:
+                    Parameter.IsConst = true;
+                    break;
+                case CppClassesParser.RULE_typeParameterLink:
+                    Parameter.IsLink = true;
+                    break;
                 case CppClassesParser.RULE_parameterType:
                     Parameter.TypeName = e.Context.GetText();
                     break;

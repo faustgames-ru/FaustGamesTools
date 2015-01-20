@@ -2,6 +2,7 @@
 #define TESTHEADER_H
 
 #define API_CALL __stdcall
+#define DLLEXPORT __declspec( dllexport )
 
 namespace Test
 {
@@ -37,19 +38,17 @@ namespace Test
 	class ITestSystem
 	{
 	public:
-		virtual void API_CALL update(const IUpdateArgs *args) = 0;
+		virtual void API_CALL update(const IUpdateArgs * args) = 0;
 	};
 
 	class ITestFactory
 	{
 	public:
-		virtual ITestSystem * API_CALL ñreateTestSystem() = 0;
-		virtual IUpdateArgs * API_CALL ñreateUpdateArgs() = 0;
+		virtual ITestSystem * API_CALL createTestSystem() = 0;
+		virtual IUpdateArgs * API_CALL createUpdateArgs() = 0;
 	};
 
-	ITestFactory * API_CALL CreateTestFactory();
+	extern "C" DLLEXPORT ITestFactory * API_CALL createTestFactory();
 }
-
-#include "TestHeaderPInvoke.h"
 
 #endif /*TESTHEADER_H*/
