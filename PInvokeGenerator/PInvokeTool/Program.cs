@@ -52,7 +52,7 @@ namespace PInvokeTool
 
             foreach (var a in args)
             {
-                if (!Directory.Exists(a)) continue;
+                //if (!Directory.Exists(a)) continue;
 
                 var ext = Path.GetExtension(a);
                 if (ext == null) continue;

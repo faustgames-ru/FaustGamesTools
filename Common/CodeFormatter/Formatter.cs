@@ -245,11 +245,18 @@ namespace CodeFormatter
                                 TypeName = parameter.IsLink ? "IntPtr" : parameter.TypeName,
                                 Name = parameter.Name
                             };
+                            var resflectType = parameter.Class == null
+                                ? parameter.TypeName
+                                : parameter.Class.NormalizedName;
+                            if ((resflectType == "void") && parameter.IsLink)
+                            {
+                                resflectType = "IntPtr";
+                            }
                             var reflectParameter = new MethodParameter
                             {
                                 IsConst = false,
                                 IsLink = false,
-                                TypeName = parameter.Class == null ? parameter.TypeName : parameter.Class.NormalizedName,
+                                TypeName = resflectType,
                                 Name = parameter.Name
                             };
                             pInvokeReflection.Parameters.Add(reflectParameter);
