@@ -186,3 +186,7 @@ LINE_COMMENT
 DIRECTIVE
     :   '#' ~[\r\n]* -> skip
     ;
+
+TYPEDEF
+    :   'typedef' ~[\r\n]* -> skip
+    ;
