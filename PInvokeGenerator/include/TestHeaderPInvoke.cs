@@ -12,6 +12,18 @@ namespace Test
 		public const string Dll = "..\..\..\include\TestHeader";
 	}
 	
+	public enum Shaders
+	{
+		SolidColor = 0x1,
+		TextureColor = 0x2,
+		TextureLighmapColor = 0x3,
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	public struct MeshVertex
+	{
+	}
+	
 	public class UpdateArgs
 	{
 		public IntPtr ClassInstance;

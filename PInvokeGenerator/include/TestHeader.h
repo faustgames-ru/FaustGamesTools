@@ -8,15 +8,21 @@
 
 namespace Test
 {
+	enum Shaders
+	{
+		SolidColor = 0x1,
+		TextureColor = 0x2,
+		TextureLighmapColor = 0x3,
+	};
+
 	struct MeshVertex
 	{
-		ushort
 	};
 
 	class IUpdateArgs
 	{
 	public:
-		virtual void API_CALL setElapsedTime(void * value) = 0;
+		virtual void API_CALL setElapsedTime(Shaders shader, void * value) = 0;
 	};
 
 	extern "C" DLLEXPORT IUpdateArgs * API_CALL createUpdateArgs();

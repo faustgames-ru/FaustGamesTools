@@ -12,89 +12,39 @@ namespace Test
 		public const string Dll = "TestHeader";
 	}
 	
-	[StructLayout(LayoutKind.Sequential)]
-	public struct Vector2
+	public enum Shaders
 	{
-		public float x;
-		public float y;
+		SolidColor = 0x1,
+		TextureColor = 0x2,
+		TextureLighmapColor = 0x3,
 	}
 	
 	[StructLayout(LayoutKind.Sequential)]
-	public struct Vector3
+	public struct MeshVertex
 	{
-		public float x;
-		public float y;
-		public float z;
-	}
-	
-	[StructLayout(LayoutKind.Sequential)]
-	public struct Vector4
-	{
-		public float x;
-		public float y;
-		public float z;
-		public float w;
 	}
 	
 	public class UpdateArgs
 	{
 		public IntPtr ClassInstance;
-		public float GetElapsedTime ()
+		public void SetElapsedTime (Shaders shader, IntPtr value)
 		{
-			return Test_UpdateArgs_getElapsedTime(ClassInstance);
+			Test_UpdateArgs_setElapsedTime(ClassInstance, shader, value);
 		}
 		
 		[DllImport(Version.Dll)]
-		static extern private float Test_UpdateArgs_getElapsedTime (IntPtr classInstance);
-		public void SetElapsedTime (float value)
-		{
-			Test_UpdateArgs_setElapsedTime(ClassInstance, value);
-		}
-		
-		[DllImport(Version.Dll)]
-		static extern private void Test_UpdateArgs_setElapsedTime (IntPtr classInstance, float value);
-	}
-	
-	public class TestSystem
-	{
-		public IntPtr ClassInstance;
-		public void Update (UpdateArgs args)
-		{
-			Test_TestSystem_update(ClassInstance, args.ClassInstance);
-		}
-		
-		[DllImport(Version.Dll)]
-		static extern private void Test_TestSystem_update (IntPtr classInstance, IntPtr args);
-	}
-	
-	public class TestFactory
-	{
-		public IntPtr ClassInstance;
-		public TestSystem CreateTestSystem ()
-		{
-			return new TestSystem{ ClassInstance = Test_TestFactory_createTestSystem(ClassInstance) };
-		}
-		
-		[DllImport(Version.Dll)]
-		static extern private IntPtr Test_TestFactory_createTestSystem (IntPtr classInstance);
-		public UpdateArgs CreateUpdateArgs ()
-		{
-			return new UpdateArgs{ ClassInstance = Test_TestFactory_createUpdateArgs(ClassInstance) };
-		}
-		
-		[DllImport(Version.Dll)]
-		static extern private IntPtr Test_TestFactory_createUpdateArgs (IntPtr classInstance);
+		static extern private void Test_UpdateArgs_setElapsedTime (IntPtr classInstance, Shaders shader, IntPtr value);
 	}
 	
 	public class TestHeader
 	{
-		static public TestFactory CreateTestFactory ()
+		static public UpdateArgs CreateUpdateArgs ()
 		{
-			return new TestFactory{ ClassInstance = createTestFactory() };
+			return new UpdateArgs{ ClassInstance = createUpdateArgs() };
 		}
 		
 		[DllImport(Version.Dll)]
-		static extern private IntPtr createTestFactory ();
+		static extern private IntPtr createUpdateArgs ();
 	}
 	
 }

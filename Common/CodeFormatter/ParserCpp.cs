@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using GrammarCpp;
@@ -78,6 +79,12 @@ namespace CodeFormatter
                     e.Listener.StateClass.Class = classItem;
                     e.Listener.PushState(e.Listener.StateClass, CppClassesParser.RULE_classDeclaration);
                     break;
+                case CppClassesParser.RULE_enumDeclaration:
+                    var enumItem = new Enum();
+                    Namespace.Enums.Add(enumItem);
+                    e.Listener.StateEnum.Enum = enumItem;
+                    e.Listener.PushState(e.Listener.StateEnum, CppClassesParser.RULE_enumDeclaration);
+                    break;
             }
         }
     }
@@ -137,6 +144,32 @@ namespace CodeFormatter
                     break;
                 case CppClassesParser.RULE_fieldName:
                     Field.Name = e.Context.GetText();
+                    break;
+            }
+        }
+    }
+
+    internal class ParseStateEnum : ParseState
+    {
+        public Enum Enum;
+        public override void EnterRule(ParseArgs e)
+        {
+            switch (e.Context.RuleIndex)
+            {
+                case CppClassesParser.RULE_enumDeclarationName:
+                    Enum.Name = e.Context.GetText();
+                    break;
+                case CppClassesParser.RULE_enumItemDeclaration:
+                    Enum.Items.Add(new EnumItem
+                    {
+                        Name = e.Context.GetText()
+                    });
+                    break;
+                case CppClassesParser.RULE_enumItemName:
+                    Enum.Items.Last().Name = e.Context.GetText();
+                    break;
+                case CppClassesParser.RULE_enumItemValue:
+                    Enum.Items.Last().Value = e.Context.GetText();
                     break;
             }
         }
@@ -206,6 +239,7 @@ namespace CodeFormatter
         public ParseStateMethod StateMethod = new ParseStateMethod();
         public ParseStateField StateField = new ParseStateField();
         public ParseStateMethodParameter StateMethodParameter = new ParseStateMethodParameter();
+        public ParseStateEnum StateEnum = new ParseStateEnum();
 
         readonly ParseArgs _args = new ParseArgs();
         public ParseTreeListener()

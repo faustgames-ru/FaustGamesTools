@@ -14,7 +14,7 @@ namespaceName
 	;
 
 namespaceBody
-    :   '{' structDeclaration* classDeclaration* methodDeclaration* '}'
+    :   '{' enumDeclaration* structDeclaration* classDeclaration* methodDeclaration* '}'
 	;
 
 structDeclaration
@@ -29,6 +29,31 @@ structDeclarationName
 structBody
     :   '{' fieldsDeclarations* '}' ';'
     ;
+
+enumDeclaration
+    :   'enum' enumDeclarationName 
+        enumBody
+    ;
+
+enumDeclarationName
+	: Identifier
+	;
+
+enumBody
+    :   '{' enumItemDeclaration (',' enumItemDeclaration)* ','? '}' ';'
+    ;
+
+enumItemDeclaration
+	:	enumItemName '='  enumItemValue
+	;
+
+enumItemName
+	: Identifier
+	;
+
+enumItemValue
+	: HexConstant
+	;
 
 classDeclaration
     :   'class' classDeclarationName 
@@ -130,6 +155,11 @@ Identifier
         |   Digit
         )*
     ;
+
+HexConstant
+	:   '0x'
+		HexadecimalDigit*
+	;
 
 fragment
 IdentifierNondigit

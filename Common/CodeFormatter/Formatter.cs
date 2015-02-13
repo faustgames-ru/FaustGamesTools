@@ -19,6 +19,7 @@ namespace CodeFormatter
         public string Name;
         public List<Struct> Structs = new List<Struct>();
         public List<Class> Classes = new List<Class>();
+        public List<Enum> Enums = new List<Enum>();
         public List<Method> RootMethods = new List<Method>();
         
         public override string ToString()
@@ -61,6 +62,26 @@ namespace CodeFormatter
         public override string ToString()
         {
             return string.Format("{0} {1}", TypeName, Name);
+        }
+    }
+
+    public class EnumItem
+    {
+        public string Name;
+        public string Value;
+        public override string ToString()
+        {
+            return string.Format("{0}={1}", Name, Value);
+        }
+    }
+
+    public class Enum
+    {
+        public string Name;
+        public List<EnumItem> Items = new List<EnumItem>();
+        public override string ToString()
+        {
+            return Name;
         }
     }
 
@@ -190,6 +211,10 @@ namespace CodeFormatter
                     Name = ns.Name
                 };
                 result.Namespaces.Add(resultNamespace);
+                foreach (var e in ns.Enums)
+                {
+                    resultNamespace.Enums.Add(e);
+                }
                 foreach (var s in ns.Structs)
                 {
                     resultNamespace.Structs.Add(s);
@@ -534,6 +559,7 @@ namespace CodeFormatter
     {
         public string PatternNamespace = "ns {0}";
         public string PatternClass = "class {0}";
+        public string PatternEnum = "enum {0}";
         public string PatternStruct = "struct {0}";
         public string PatternMethod = "{0} {1} ({2})";
         public string PatternPrivateMethod = "_ {0} {1} ({2})";
@@ -550,6 +576,7 @@ namespace CodeFormatter
         {
             PatternNamespace = "namespace {0}",
             PatternClass = "public class {0}",
+            PatternEnum = "public enum {0}",
             PatternStruct = "public struct {0}",
             PatternMethod = "public {0} {1} ({2})",
             PatternPrivateMethod = "private {0} {1} ({2})",
@@ -563,6 +590,7 @@ namespace CodeFormatter
         {
             PatternNamespace = "namespace {0}",
             PatternClass = "class {0}",
+            PatternEnum = "enum {0}",
             PatternStruct = "struct {0}",
             PatternMethod = "extern \"C\" DLLEXPORT {0} API_CALL {1} ({2})",
             PatternPrivateMethod = "extern \"C\" DLLEXPORT {0} API_CALL {1} ({2})",
@@ -593,6 +621,8 @@ namespace CodeFormatter
             {
                 BeginCodeBlock(tabulator, _formatPatterns.PatternNamespace, ns.Name);
                 BeforeFillNamespace(tabulator, ns);
+                foreach (var item in ns.Enums)
+                    Format(tabulator, item);
                 foreach (var item in ns.Structs)
                     Format(tabulator, item);
                 foreach (var item in ns.Classes)
@@ -601,6 +631,26 @@ namespace CodeFormatter
                     Format(tabulator, item);
                 EndCodeBlock(tabulator);
             }
+        }
+
+        private void Format(Tabulator tabulator, Enum value)
+        {
+            BeginCodeBlock(tabulator, _formatPatterns.PatternEnum, value.Name);
+            Format(tabulator, value.Items);
+            EndCodeBlock(tabulator);
+        }
+
+        private void Format(Tabulator tabulator, List<EnumItem> items)
+        {
+            foreach (var item in items)
+            {
+                Format(tabulator, item);
+            }
+        }
+
+        private void Format(Tabulator tabulator, EnumItem item)
+        {
+            tabulator.AppendFormatLine("{0} = {1},", item.Name, item.Value);
         }
 
         private void Format(Tabulator tabulator, Class value)

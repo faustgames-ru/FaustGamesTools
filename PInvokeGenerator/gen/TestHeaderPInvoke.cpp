@@ -6,29 +6,9 @@
 
 namespace Test
 {
-	extern "C" DLLEXPORT float API_CALL Test_UpdateArgs_getElapsedTime (IUpdateArgs * classInstance)
+	extern "C" DLLEXPORT void API_CALL Test_UpdateArgs_setElapsedTime (IUpdateArgs * classInstance, Shaders shader, void * value)
 	{
-		return classInstance->getElapsedTime();
-	}
-	
-	extern "C" DLLEXPORT void API_CALL Test_UpdateArgs_setElapsedTime (IUpdateArgs * classInstance, float value)
-	{
-		classInstance->setElapsedTime(value);
-	}
-	
-	extern "C" DLLEXPORT void API_CALL Test_TestSystem_update (ITestSystem * classInstance, const IUpdateArgs * args)
-	{
-		classInstance->update(args);
-	}
-	
-	extern "C" DLLEXPORT ITestSystem * API_CALL Test_TestFactory_createTestSystem (ITestFactory * classInstance)
-	{
-		return classInstance->createTestSystem();
-	}
-	
-	extern "C" DLLEXPORT IUpdateArgs * API_CALL Test_TestFactory_createUpdateArgs (ITestFactory * classInstance)
-	{
-		return classInstance->createUpdateArgs();
+		classInstance->setElapsedTime(shader, value);
 	}
 	
 }
