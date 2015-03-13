@@ -277,6 +277,10 @@ namespace CodeFormatter
                             {
                                 resflectType = "IntPtr";
                             }
+                            if ((resflectType == "char") && parameter.IsLink)
+                            {
+                                resflectType = newParameter.TypeName = "string";
+                            }
                             var reflectParameter = new MethodParameter
                             {
                                 IsConst = false,
