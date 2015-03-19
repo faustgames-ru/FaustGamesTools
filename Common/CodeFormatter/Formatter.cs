@@ -470,7 +470,7 @@ namespace CodeFormatter
             }
             return result;
         }
-
+        
         public void Build()
         {
             ClassesMap.Clear();
@@ -623,8 +623,11 @@ namespace CodeFormatter
         {
             foreach (var ns in file.Namespaces)
             {
-                BeginCodeBlock(tabulator, _formatPatterns.PatternNamespace, ns.Name);
+                if (!string.IsNullOrEmpty(ns.Name))
+                    BeginCodeBlock(tabulator, _formatPatterns.PatternNamespace, ns.Name);
+                
                 BeforeFillNamespace(tabulator, ns);
+                
                 foreach (var item in ns.Enums)
                     Format(tabulator, item);
                 foreach (var item in ns.Structs)
@@ -633,7 +636,9 @@ namespace CodeFormatter
                     Format(tabulator, item);
                 foreach (var item in ns.RootMethods)
                     Format(tabulator, item);
-                EndCodeBlock(tabulator);
+                
+                if (!string.IsNullOrEmpty(ns.Name))
+                    EndCodeBlock(tabulator);
             }
         }
 
