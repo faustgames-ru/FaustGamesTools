@@ -858,7 +858,7 @@ namespace CodeFormatter
         protected override void BeforeFillNamespace(Tabulator tabulator, Namespace value)
         {
             BeginCodeBlock(tabulator, _formatPatterns.PatternClass, "Version");
-            tabulator.AppendFormatLineWithoutTabs("#if IOS");
+            tabulator.AppendFormatLineWithoutTabs("#if __IOS__");
             tabulator.AppendFormatLine("public const string Dll = \"{0}\";", "__Internal");
             tabulator.AppendFormatLineWithoutTabs("#else");
             tabulator.AppendFormatLine("public const string Dll = \"{0}\";", _file.LibraryName);
