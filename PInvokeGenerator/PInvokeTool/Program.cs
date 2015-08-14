@@ -12,6 +12,7 @@ namespace PInvokeTool
     {
         private static void Main(string[] args)
         {
+#if DEBUG
             if (Directory.Exists("include"))
             {
                 var headers = Directory.GetFiles("include", "*.h");
@@ -45,6 +46,7 @@ namespace PInvokeTool
                     File.WriteAllText(@"gen\" + name + "PInvoke.cs", tabulatorCSharp.Build());
                 }
             }
+#endif
             if (args.Length == 0)
             {
                 // todo: display help
@@ -67,20 +69,21 @@ namespace PInvokeTool
                 var parser = new ParserCpp();
                 var result = parser.Parse(arg, arg + ".h", input);
                 result.Build();
-                var pInvoke = result.CreatePInvokeCpp();
-                var formatter = new FormatProviderCppPInvoke();
-                var tabulator = new Tabulator();
-                formatter.Format(pInvoke, tabulator);
-                File.WriteAllText(arg+"PInvoke.cpp",tabulator.Build());
 
-                var pInvokeCSharp = result.CreatePInvokeCSharp();
-                var formatterCSharp = new FormatProviderCSharpPInvoke();
-                var tabulatorCSharp = new Tabulator();
-                formatterCSharp.Format(pInvokeCSharp, tabulatorCSharp);
-                File.WriteAllText(arg+"PInvoke.cs",
-                    tabulatorCSharp.Build());
+                SaveGeneratedFile<FormatProviderCppPInvoke, Tabulator>(result.CreatePInvokeCpp(), arg + "PInvoke.cpp");
+                SaveGeneratedFile<FormatProviderCppJni, Tabulator>(result.CreateJniCpp(), arg + "JniBridge.cpp");
+                SaveGeneratedFile<FormatProviderCSharpPInvoke, Tabulator>(result.CreatePInvokeCSharp(), arg + "PInvoke.cs");
             }
 
+        }
+
+        public static void SaveGeneratedFile<TFormatProvider, TTabulator>(CodeFile file, string fileName)
+            where TFormatProvider : FormatProvider, new() where TTabulator : Tabulator, new()
+        {
+            var formatter = new TFormatProvider();
+            var tabulator = new TTabulator();
+            formatter.Format(file, tabulator);
+            File.WriteAllText(fileName, tabulator.Build());
         }
     }
 }

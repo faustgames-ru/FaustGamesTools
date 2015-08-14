@@ -9,7 +9,11 @@ namespace Test
 {
 	public class Version
 	{
+#if __IOS__
+		public const string Dll = "__Internal";
+#else
 		public const string Dll = "..\..\..\include\TestHeader";
+#endif
 	}
 	
 	public enum Shaders
@@ -27,13 +31,13 @@ namespace Test
 	public class UpdateArgs
 	{
 		public IntPtr ClassInstance;
-		public void SetElapsedTime (IntPtr value)
+		public void SetElapsedTime (Shaders shader, IntPtr value)
 		{
-			Test_UpdateArgs_setElapsedTime(ClassInstance, value);
+			Test_UpdateArgs_setElapsedTime(ClassInstance, shader, value);
 		}
 		
 		[DllImport(Version.Dll)]
-		static extern private void Test_UpdateArgs_setElapsedTime (IntPtr classInstance, IntPtr value);
+		static extern private void Test_UpdateArgs_setElapsedTime (IntPtr classInstance, Shaders shader, IntPtr value);
 	}
 	
 	public class TestHeader

@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="res">
+      <UniqueIdentifier>419b31d0-4c7c-48d5-86a8-68aabb3e44ce</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\values">
+      <UniqueIdentifier>439a653c-63da-48a2-bc5d-d9fdbc6b7c76</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{378295c4-d1b4-4045-8ac3-7bc256f9e313}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\com">
+      <UniqueIdentifier>{6d9a4068-6c24-4196-a2d4-b6e31a1b9d4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\com\faustgames">
+      <UniqueIdentifier>{d4ea6d56-606f-476d-ad92-131538b36496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\com\faustgames\testjni">
+      <UniqueIdentifier>{b6ab8ecb-5033-494b-b8bc-aa93d8bd6ff7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="jni">
+      <UniqueIdentifier>{1a213c14-bd56-4c1d-a29f-fb7376b44c29}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidBuild Include="AndroidManifest.xml" />
+    <AndroidBuild Include="res\values\strings.xml">
+      <Filter>res\values</Filter>
+    </AndroidBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <JCompile Include="src\com\faustgames\testjni\TestJni.java">
+      <Filter>src\com\faustgames\testjni</Filter>
+    </JCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="jni\TestJni.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\include\TestHeaderJniBridge.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\include\llgeJniBridge.cpp">
+      <Filter>jni</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\TestHeader.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\llge.h">
+      <Filter>jni</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -21,7 +21,7 @@ namespace CodeFormatter
         public List<Class> Classes = new List<Class>();
         public List<Enum> Enums = new List<Enum>();
         public List<Method> RootMethods = new List<Method>();
-        
+
         public override string ToString()
         {
             return Name;
@@ -87,6 +87,17 @@ namespace CodeFormatter
 
     public class MethodParameter
     {
+        public MethodParameter()
+        {
+        }
+
+        public MethodParameter(MethodParameter p)
+        {
+            TypeName = p.TypeName;
+            Name = p.Name;
+            IsConst = p.IsConst;
+            IsLink = p.IsLink;
+        }
         public string FullTypeName
         {
             get { return (IsConst ? "const " : "") + TypeName + (IsLink ? " *":""); }
@@ -192,6 +203,14 @@ namespace CodeFormatter
         }
     }
 
+    public abstract class CodeFileBuilder
+    {
+        public static CodeFileBuilder PInvokeCCharp = new CodeFileBuilderPInvokeCCharp();
+        public static CodeFileBuilder PInvokeCpp = new CodeFileBuilderPInvokeCpp();
+        public static CodeFileBuilder JniCpp = new CodeFileBuilderJniCpp();
+        public abstract CodeFile CreateFile(CodeFile source);
+    }
+
     public class CodeFile
     {
         public String FileName;
@@ -203,274 +222,19 @@ namespace CodeFormatter
 
         public CodeFile CreatePInvokeCSharp()
         {
-            var result = new CodeFile { LibraryName = LibraryName, FileName = FileName };
-            foreach (var ns in Namespaces)
-            {
-                var resultNamespace = new Namespace
-                {
-                    Name = ns.Name
-                };
-                result.Namespaces.Add(resultNamespace);
-                foreach (var e in ns.Enums)
-                {
-                    resultNamespace.Enums.Add(e);
-                }
-                foreach (var s in ns.Structs)
-                {
-                    resultNamespace.Structs.Add(s);
-                }
-                foreach (var c in ns.Classes)
-                {
-                    c.PInvokeMethods.Clear();
-                    var newClass = new Class
-                    {
-                        Name = c.NormalizedName,
-                        NormalizedName = c.NormalizedName
-                    };
-                    newClass.Fields.Add(new Field
-                    {
-                        Name = "ClassInstance",
-                        TypeName = "IntPtr",
-                    });
-                    foreach (var method in c.Methods.Items)
-                    {
-                        var pInvoke = new Method
-                        {
-                            Name = string.Format("{0}_{1}_{2}", ns.Name, c.NormalizedName, method.Name),
-                            ResulTypeName = method.ReturnLink?"IntPtr":method.ResulTypeName,
-                            ReturnLink = false,
-                            ReturnConst = false,
-                            IsExtern = true,
-                            IsStatic = true,
-                            IsPrivate = true,
-                        };
-                        var pInvokeReflection = new Method
-                        {
-                            Name = method.Name,
-                            ResulTypeName = method.ReturnClass == null ? method.ResulTypeName : method.ReturnClass.NormalizedName,
-                            ReturnLink = false,
-                            ReturnConst = false,
-                            IsExtern = false,
-                            IsStatic = false,
-                            IsPrivate = false,
-                        };
-                        const string classInstance = "classInstance";
-                        pInvoke.Parameters.Add(new MethodParameter
-                        {
-                            Name = classInstance,
-                            TypeName = "IntPtr"
-                        });
-                        for (var i = 0; i < method.Parameters.Count; i++)
-                        {
-                            var parameter = method.Parameters[i];
-                            var newParameter = new MethodParameter
-                            {
-                                IsConst = false,
-                                IsLink = false,
-                                TypeName = parameter.IsLink ? "IntPtr" : parameter.TypeName,
-                                Name = parameter.Name
-                            };
-                            var resflectType = parameter.Class == null
-                                ? parameter.TypeName
-                                : parameter.Class.NormalizedName;
-                            if ((resflectType == "void") && parameter.IsLink)
-                            {
-                                resflectType = "IntPtr";
-                            }
-                            if ((resflectType == "char") && parameter.IsLink)
-                            {
-                                resflectType = newParameter.TypeName = "string";
-                            }
-                            var reflectParameter = new MethodParameter
-                            {
-                                IsConst = false,
-                                IsLink = false,
-                                TypeName = resflectType,
-                                Name = parameter.Name
-                            };
-                            pInvokeReflection.Parameters.Add(reflectParameter);
-                            pInvoke.Parameters.Add(newParameter);
-                        }
-
-                        var parametersLine = "ClassInstance";
-                        for (var i = 0; i < method.Parameters.Count; i++)
-                        {
-                            parametersLine += ", ";
-                            var parameter = method.Parameters[i];
-                            if (parameter.Class != null)
-                                parametersLine += parameter.Name + ".ClassInstance";
-                            else
-                                parametersLine += parameter.Name;
-                        }
-
-                        var body = "";
-                        if (pInvokeReflection.ResulTypeName != "void")
-                        {
-                            body += "return ";
-                        }
-                        if (method.ReturnClass != null)
-                        {
-                            body += string.Format("new {0}{{ ClassInstance = {1}({2}) }};",
-                                method.ReturnClass.NormalizedName,
-                                pInvoke.Name, parametersLine);
-                        }
-                        else
-                        {
-                            body += string.Format("{0}({1});", pInvoke.Name, parametersLine);
-                        }
-
-                        var firstChar = pInvokeReflection.Name.Remove(1, pInvokeReflection.Name.Length - 1);
-                        var nextChars = pInvokeReflection.Name.Remove(0, 1);
-                        pInvokeReflection.Name = firstChar.ToUpper() + nextChars;
-
-                        pInvokeReflection.Body = body;
-
-                        newClass.Methods.Add(pInvokeReflection);
-                        newClass.Methods.Add(pInvoke);       
-                    }
-                    resultNamespace.Classes.Add(newClass);
-                }
-                var rootClass = new Class
-                {
-                    Name = Path.GetFileNameWithoutExtension(LibraryName),
-                    NormalizedName = Path.GetFileNameWithoutExtension(LibraryName)
-                };
-                foreach (var method in ns.RootMethods)
-                {
-                    var pInvoke = new Method
-                    {
-                        Name = method.Name,
-                        ResulTypeName = method.ReturnLink ? "IntPtr" : method.ResulTypeName,
-                        ReturnLink = false,
-                        ReturnConst = false,
-                        IsExtern = true,
-                        IsStatic = true,
-                        IsPrivate = true,
-                    };
-                    var pInvokeReflection = new Method
-                    {
-                        Name = method.Name,
-                        ResulTypeName = method.ReturnClass == null ? method.ResulTypeName : method.ReturnClass.NormalizedName,
-                        ReturnLink = false,
-                        ReturnConst = false,
-                        IsExtern = false,
-                        IsStatic = true,
-                        IsPrivate = false,
-                    };
-                    for (var i = 0; i < method.Parameters.Count; i++)
-                    {
-                        var parameter = method.Parameters[i];
-                        var newParameter = new MethodParameter
-                        {
-                            IsConst = false,
-                            IsLink = false,
-                            TypeName = parameter.IsLink ? "IntPtr" : parameter.TypeName,
-                            Name = parameter.Name
-                        };
-                        var reflectParameter = new MethodParameter
-                        {
-                            IsConst = false,
-                            IsLink = false,
-                            TypeName = parameter.Class==null ? parameter.TypeName:parameter.Class.NormalizedName,
-                            Name = parameter.Name
-                        };
-                        pInvoke.Parameters.Add(newParameter);
-                        pInvokeReflection.Parameters.Add(reflectParameter);
-                    }
-
-                    var parametersLine = "";
-                    for (var i = 0; i < method.Parameters.Count; i++)
-                    {
-                        var parameter = method.Parameters[i];
-                        if (parameter.Class != null)
-                            parametersLine += parameter.Name + ".ClassInstance";
-                        else
-                            parametersLine += parameter.Name;
-                        if (i < (method.Parameters.Count - 1))
-                            parametersLine += ", ";
-                    }
-
-                    var body = "";
-                    if (pInvokeReflection.ResulTypeName != "void")
-                    {
-                        body += "return ";
-                    }
-                    if (method.ReturnClass != null)
-                    {
-                        body += string.Format("new {0}{{ ClassInstance = {1}({2}) }};",
-                            method.ReturnClass.NormalizedName,
-                            pInvoke.Name, parametersLine);
-                    }
-                    else
-                    {
-                        body += string.Format("{0}({1});", pInvoke.Name, parametersLine);
-                    }
-                    pInvokeReflection.Body = body;
-                    var firstChar = pInvokeReflection.Name.Remove(1, pInvokeReflection.Name.Length - 1);
-                    var nextChars = pInvokeReflection.Name.Remove(0, 1);
-                    pInvokeReflection.Name = firstChar.ToUpper() + nextChars;
-
-
-                    rootClass.Methods.Add(pInvokeReflection);
-                    rootClass.Methods.Add(pInvoke);
-                }
-                resultNamespace.Classes.Add(rootClass);
-            }
-            return result;
+            return CodeFileBuilder.PInvokeCCharp.CreateFile(this);
         }
 
         public CodeFile CreatePInvokeCpp()
         {
-            var result = new CodeFile
-            {
-                LibraryName = LibraryName,
-                FileName = FileName
-            };
-            
-            foreach (var ns in Namespaces)
-            {
-                var resultNamespace = new Namespace
-                {
-                    Name = ns.Name
-                };
-                result.Namespaces.Add(resultNamespace);
-                foreach (var c in ns.Classes)
-                {
-                    c.PInvokeMethods.Clear();
-                    foreach (var method in c.Methods.Items)
-                    {
-                        var pInvoke = new Method
-                        {
-                            Name = string.Format("{0}_{1}_{2}", ns.Name, c.NormalizedName, method.Name),
-                            ResulTypeName = method.ResulTypeName,
-                            ReturnLink = method.ReturnLink
-                        };
-                        const string classInstance = "classInstance";
-                        pInvoke.Parameters.Add(new MethodParameter
-                        {
-                            Name = classInstance,
-                            TypeName = c.Name + " *"
-                        });
-                        var parametersLine = "";
-                        for (var i = 0; i < method.Parameters.Count; i++)
-                        {
-                            var parameter = method.Parameters[i];
-                            pInvoke.Parameters.Add(parameter);
-                            parametersLine += parameter.Name;
-                            if (i < (method.Parameters.Count - 1)) 
-                                parametersLine += ", ";
-                        }
-                        if (method.ResulTypeName != "void")
-                            pInvoke.Body = "return ";
-                        pInvoke.Body += string.Format("{0}->{1}({2});", classInstance, method.Name, parametersLine);
-                        resultNamespace.RootMethods.Add(pInvoke);
-                        c.PInvokeMethods.Add(pInvoke);
-                    }
-                }
-            }
-            return result;
+            return CodeFileBuilder.PInvokeCpp.CreateFile(this);
         }
-        
+
+        public CodeFile CreateJniCpp()
+        {
+            return CodeFileBuilder.JniCpp.CreateFile(this);
+        }
+
         public void Build()
         {
             ClassesMap.Clear();
@@ -607,11 +371,11 @@ namespace CodeFormatter
 
     public class FormatProvider
     {
-        protected FormatPatterns _formatPatterns;
+        protected FormatPatterns FormatPatterns;
 
         public FormatProvider(FormatPatterns formatPatterns)
         {
-            _formatPatterns = formatPatterns;
+            FormatPatterns = formatPatterns;
         }
 
         protected virtual void BeforeFillNamespace(Tabulator tabulator, Namespace value)
@@ -624,7 +388,7 @@ namespace CodeFormatter
             foreach (var ns in file.Namespaces)
             {
                 if (!string.IsNullOrEmpty(ns.Name))
-                    BeginCodeBlock(tabulator, _formatPatterns.PatternNamespace, ns.Name);
+                    BeginCodeBlock(tabulator, FormatPatterns.PatternNamespace, ns.Name);
                 
                 BeforeFillNamespace(tabulator, ns);
                 
@@ -644,7 +408,7 @@ namespace CodeFormatter
 
         private void Format(Tabulator tabulator, Enum value)
         {
-            BeginCodeBlock(tabulator, _formatPatterns.PatternEnum, value.Name);
+            BeginCodeBlock(tabulator, FormatPatterns.PatternEnum, value.Name);
             Format(tabulator, value.Items);
             EndCodeBlock(tabulator);
         }
@@ -664,7 +428,7 @@ namespace CodeFormatter
 
         private void Format(Tabulator tabulator, Class value)
         {
-            BeginCodeBlock(tabulator, _formatPatterns.PatternClass, value.Name);
+            BeginCodeBlock(tabulator, FormatPatterns.PatternClass, value.Name);
             Format(tabulator, value.Fields);
             Format(tabulator, value.Methods);
             EndCodeBlock(tabulator);
@@ -689,13 +453,13 @@ namespace CodeFormatter
             for (int i = 0; i < value.Parameters.Count; i++)
             {
                 var p = value.Parameters[i];
-                parameters += string.Format(_formatPatterns.PatternParameter, p.FullTypeName, p.Name);
+                parameters += string.Format(FormatPatterns.PatternParameter, p.FullTypeName, p.Name);
                 if (i < (value.Parameters.Count - 1))
                 {
                     parameters += ", ";
                 }
             }
-            var pattern = value.IsPrivate ? _formatPatterns.PatternPrivateMethod : _formatPatterns.PatternMethod;
+            var pattern = value.IsPrivate ? FormatPatterns.PatternPrivateMethod : FormatPatterns.PatternMethod;
             if (value.Body != null)
             {
                 BeginCodeBlock(tabulator, (value.IsStatic ? "static " : "") + (value.IsExtern ? "extern " : "") + pattern,
@@ -714,7 +478,7 @@ namespace CodeFormatter
         protected void Format(Tabulator tabulator, Field value)
         {
             tabulator.AppendFormatLine(
-                value.IsPrivate ? _formatPatterns.PatternPrivateFiled : _formatPatterns.PatternFiled, 
+                value.IsPrivate ? FormatPatterns.PatternPrivateFiled : FormatPatterns.PatternFiled, 
                 value.TypeName,
                 value.Name);
         }
@@ -734,7 +498,7 @@ namespace CodeFormatter
         private void Format(Tabulator tabulator, Struct value)
         {
             BeforeAppendStruct(tabulator, value);
-            BeginCodeBlock(tabulator, _formatPatterns.PatternStruct, value.Name);
+            BeginCodeBlock(tabulator, FormatPatterns.PatternStruct, value.Name);
             Format(tabulator, value.Fields);
             EndCodeBlock(tabulator);
         }
@@ -818,62 +582,6 @@ namespace CodeFormatter
         public string Build()
         {
             return _builder.ToString();
-        }
-    }
-
-    public class FormatProviderCppPInvoke : FormatProvider
-    {
-        public FormatProviderCppPInvoke()
-            : base(FormatPatterns.Cpp)
-        {
-        }
-
-        public override void Format(CodeFile file, Tabulator tabulator)
-        {
-            tabulator.AppendFormatLine("#include \"{0}\"", file.FileName);
-            tabulator.AppendLine("");
-            base.Format(file, tabulator);
-        }
-    }
-
-    public class FormatProviderCSharpPInvoke : FormatProvider
-    {
-        private CodeFile _file;
-        public FormatProviderCSharpPInvoke()
-            : base(FormatPatterns.CSharp)
-        {
-        }
-
-        protected override void BeforeAppendStaticMethod(Tabulator tabulator, Method value)
-        {
-            tabulator.AppendLine("[DllImport(Version.Dll)]");
-
-        }
-
-        protected override void BeforeAppendStruct(Tabulator tabulator, Struct value)
-        {
-            tabulator.AppendLine("[StructLayout(LayoutKind.Sequential)]");
-        }
-
-        protected override void BeforeFillNamespace(Tabulator tabulator, Namespace value)
-        {
-            BeginCodeBlock(tabulator, _formatPatterns.PatternClass, "Version");
-            tabulator.AppendFormatLineWithoutTabs("#if __IOS__");
-            tabulator.AppendFormatLine("public const string Dll = \"{0}\";", "__Internal");
-            tabulator.AppendFormatLineWithoutTabs("#else");
-            tabulator.AppendFormatLine("public const string Dll = \"{0}\";", _file.LibraryName);
-            tabulator.AppendFormatLineWithoutTabs("#endif");
-            EndCodeBlock(tabulator);
-        }
-
-
-        public override void Format(CodeFile file, Tabulator tabulator)
-        {
-            _file = file;
-            tabulator.AppendFormatLine("using System;");
-            tabulator.AppendFormatLine("using System.Runtime.InteropServices;");
-            tabulator.AppendLine("");
-            base.Format(file, tabulator);
         }
     }
 }

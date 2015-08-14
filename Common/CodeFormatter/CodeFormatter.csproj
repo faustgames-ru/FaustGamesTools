@@ -45,6 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeFileBuilderJniCpp.cs" />
+    <Compile Include="CodeFileBuilderPInvokeCCharp.cs" />
+    <Compile Include="CodeFileBuilderPInvokeCpp.cs" />
+    <Compile Include="FormatProviderCppPInvoke.cs" />
+    <Compile Include="FormatProviderCSharpPInvoke.cs" />
     <Compile Include="Formatter.cs" />
     <Compile Include="ParserCpp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

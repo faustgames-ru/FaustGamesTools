@@ -6,9 +6,9 @@
 
 namespace Test
 {
-	extern "C" DLLEXPORT void API_CALL Test_UpdateArgs_setElapsedTime (IUpdateArgs * classInstance, void * value)
+	extern "C" DLLEXPORT void API_CALL Test_UpdateArgs_setElapsedTime (IUpdateArgs * classInstance, Shaders shader, void * value)
 	{
-		classInstance->setElapsedTime(value);
+		classInstance->setElapsedTime(shader, value);
 	}
 	
 }

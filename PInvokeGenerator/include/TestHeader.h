@@ -1,8 +1,8 @@
 #ifndef TESTHEADER_H
 #define TESTHEADER_H
 
-#define API_CALL __stdcall
-#define DLLEXPORT __declspec( dllexport )
+#define API_CALL JNICALL
+#define DLLEXPORT JNIEXPORT
 
 #define ushort unsigned short
 

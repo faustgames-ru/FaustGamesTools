@@ -59,7 +59,6 @@ namespace FbxConverter.VertexConverters
     {
         public abstract void Convert(ConverterContext context);
     }
-
     public class VertexConverterPosition : VertexConverter
     {
         public override void Convert(ConverterContext context)
