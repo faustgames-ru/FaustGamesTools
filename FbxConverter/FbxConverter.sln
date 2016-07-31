@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FbxConverter", "FbxConverter\FbxConverter.csproj", "{59B3EDF1-25AB-42AA-ABAA-D30A50FB8D94}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssimpNet", "..\ThirdParty\assimp-net\AssimpNet\AssimpNet.csproj", "{3415FF29-C0BE-44FC-AD34-94796118E690}"
@@ -12,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssimpNet.Interop.Generator", "..\ThirdParty\assimp-net\AssimpNet.Interop.Generator\AssimpNet.Interop.Generator.csproj", "{EA4EF0BE-B8A9-4149-8B5A-7E353AD628C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaustGames.Controls", "..\Common\FaustGames.Controls\FaustGames.Controls.csproj", "{9F223708-C6F9-4D3B-9701-96E4B9B1C484}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentBuilder", "ContentBuilder\ContentBuilder.csproj", "{DACEB19B-376D-4D99-A29C-0AC8622F76FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +87,18 @@ Global
 		{9F223708-C6F9-4D3B-9701-96E4B9B1C484}.Net45-Release|Any CPU.Build.0 = Release|Any CPU
 		{9F223708-C6F9-4D3B-9701-96E4B9B1C484}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F223708-C6F9-4D3B-9701-96E4B9B1C484}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Net20-Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Net20-Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Net20-Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Net20-Release|Any CPU.Build.0 = Release|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Net45-Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Net45-Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Net45-Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Net45-Release|Any CPU.Build.0 = Release|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DACEB19B-376D-4D99-A29C-0AC8622F76FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
