@@ -11,7 +11,8 @@ namespace CodeFormatter
         protected override void BeforeAppendStaticMethod(Tabulator tabulator, Method value)
         {
             tabulator.AppendLine("[DllImport(Version.Dll)]");
-
+            if (value.ResulTypeName == "bool")
+                tabulator.AppendLine("[return: MarshalAs(UnmanagedType.I1)]");
         }
 
         protected override void BeforeAppendStruct(Tabulator tabulator, Struct value)

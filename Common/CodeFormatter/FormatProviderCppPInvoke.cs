@@ -32,4 +32,17 @@ namespace CodeFormatter
             base.Format(file, tabulator);
         }
     }
+
+    public class FormatProviderJavaJni : FormatProvider
+    {
+        public FormatProviderJavaJni()
+            : base(FormatPatterns.Java)
+        {
+        }
+
+        public override void Format(CodeFile file, Tabulator tabulator)
+        {
+            base.Format(file, tabulator);
+        }
+    }
 }

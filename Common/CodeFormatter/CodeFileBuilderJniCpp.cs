@@ -2,6 +2,29 @@ using System.Linq;
 
 namespace CodeFormatter
 {
+    public class CodeFileBuilderJniJava : CodeFileBuilder
+    {
+        public override CodeFile CreateFile(CodeFile source)
+        {
+            var result = new CodeFile
+            {
+                LibraryName = source.LibraryName,
+                FileName = source.FileName
+            };
+
+            foreach (var ns in source.Namespaces)
+            {
+                var resultNamespace = new Namespace
+                {
+                    Name = ns.Name
+                };
+                result.Namespaces.Add(resultNamespace);
+
+            }
+            return result;
+        }
+    }
+
     public class CodeFileBuilderJniCpp : CodeFileBuilder
     {
         public override CodeFile CreateFile(CodeFile source)

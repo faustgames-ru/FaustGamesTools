@@ -367,6 +367,20 @@ namespace CodeFormatter
             PatternPrivateFiled = "{0} {1};",
             PatternNone = "{0}",
         };
+
+        public static FormatPatterns Java = new FormatPatterns
+        {
+            PatternNamespace = "public class {0}",
+            PatternClass = "public class {0}",
+            PatternEnum = "public enum {0}",
+            PatternStruct = "public struct {0}",
+            PatternMethod = "public {0} {1} ({2})",
+            PatternPrivateMethod = "private {0} {1} ({2})",
+            PatternParameter = "{0} {1}",
+            PatternFiled = "public {0} {1};",
+            PatternPrivateFiled = "private {0} {1};",
+            PatternNone = "{0}",
+        };
     }
 
     public class FormatProvider
