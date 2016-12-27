@@ -14,8 +14,7 @@ namespaceBody
 	;
 
 classDeclaration
-    :   classAttribute?
-		'class' Identifier 
+    :   'class' Identifier 
         (':' classExtends)?
         classBody
     ;
@@ -29,14 +28,6 @@ classNames
 	;
 
 className
-	: Identifier
-	;
-
-classAttribute
-	: '//' '[' classAttributeName ']'
-	;
-
-classAttributeName
 	: Identifier
 	;
 
@@ -137,8 +128,7 @@ compileUnit
 COMMENT
     :   '/*' .*? '*/' -> skip
     ;
-/*
+
 LINE_COMMENT
     :   '//' ~[\r\n]* -> skip
     ;
-*/
