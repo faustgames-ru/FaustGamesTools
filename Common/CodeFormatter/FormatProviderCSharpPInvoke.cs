@@ -23,15 +23,14 @@ namespace CodeFormatter
         protected override void BeforeFillNamespace(Tabulator tabulator, Namespace value)
         {
             BeginCodeBlock(tabulator, FormatPatterns.PatternClass, "Version");
-            tabulator.AppendFormatLineWithoutTabs("#if __IOS__");
+            tabulator.AppendFormatLineWithoutTabs("#if __UNIFIED__");
             tabulator.AppendFormatLine("public const string Dll = \"{0}\";", "__Internal");
             tabulator.AppendFormatLineWithoutTabs("#else");
             tabulator.AppendFormatLine("public const string Dll = \"{0}\";", _file.LibraryName);
             tabulator.AppendFormatLineWithoutTabs("#endif");
-            EndCodeBlock(tabulator);
+            EndCodeBlock(tabulator); 
         }
-
-
+        
         public override void Format(CodeFile file, Tabulator tabulator)
         {
             _file = file;
